@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import com.pinkpanther.java_app.model.Employee;
 import com.pinkpanther.java_app.repository.EmployeeRepository;
+import com.pinkpanther.java_app.repository.SqldbRepository;
 
 @CrossOrigin(origins = "http://localhost:8080")
 @RestController
@@ -27,21 +28,39 @@ public class Controller{
 
     @Autowired
     EmployeeRepository employeeRepo;
+    SqldbRepository sqldbRepo;
 
     @PostMapping("/employees")
-    public ResponseEntity<?> createEmployees(@RequestBody Employee employee){
-        try{
-            Employee _employee = employeeRepo.save(new Employee(employee.getName(), employee.getExperience()));
-            return new ResponseEntity<>(_employee, HttpStatus.CREATED);
+    public ResponseEntity<?> createEmployees(@RequestBody Employee employee, @RequestParam("db") String db){
+        if(db == "mongodb"){
+            try{
+                Employee _employee = employeeRepo.save(new Employee(employee.getName(), employee.getExperience()));
+                return new ResponseEntity<>(_employee, HttpStatus.CREATED);
+            }
+
+            catch (Exception e){
+                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         }
 
-        catch (Exception e){
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        else if(db == "mysql"){
+            try{
+                Employee _employee = sqldbRepo.save(new Employee(employee.getName(), employee.getExperience()));
+                return new ResponseEntity<>(_employee, HttpStatus.CREATED);
+            }
+
+            catch (Exception e){
+                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        else{
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         }
     }
 
     @GetMapping("/employees")
-    public ResponseEntity<List<Employee>> getAllEmployees() {
+    public ResponseEntity<List<Employee>> getAllEmployees(@RequestParam("db") String db) {
         try {
             List<Employee> employees = new ArrayList<Employee>();
             employees = employeeRepo.findAll();
@@ -58,7 +77,7 @@ public class Controller{
     }
 
     @GetMapping("/employee/{id}")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable("id") String id) {
+    public ResponseEntity<Employee> getEmployeeById(@PathVariable("id") String id, @RequestParam("db") String db) {
        Optional<Employee> employeeData = employeeRepo.findEmployeeById(id);
 
         if (employeeData.isPresent()) {
@@ -72,7 +91,7 @@ public class Controller{
     
 
     @PutMapping("/employee/{id}")
-    public ResponseEntity<Employee> updateEmployee(@PathVariable("id") String id, @RequestBody Employee employee){
+    public ResponseEntity<Employee> updateEmployee(@PathVariable("id") String id, @RequestBody Employee employee, @RequestParam("db") String db){
         Optional<Employee> oldEmployee = employeeRepo.findEmployeeById(id);
         if(oldEmployee.isPresent()) {
             Employee newEmployee = oldEmployee.get();
@@ -87,7 +106,7 @@ public class Controller{
     }
 
     @DeleteMapping("/employee/{id}")
-    public ResponseEntity<HttpStatus> deleteEmployee(@PathVariable("id") String id) {
+    public ResponseEntity<HttpStatus> deleteEmployee(@PathVariable("id") String id, @RequestParam("db") String db) {
         try {
         employeeRepo.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -97,7 +116,7 @@ public class Controller{
     }
 
     @DeleteMapping("/employees")
-    public ResponseEntity<HttpStatus> deleteAllEmployees() {
+    public ResponseEntity<HttpStatus> deleteAllEmployees(@RequestParam("db") String db) {
         try {
         employeeRepo.deleteAll();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

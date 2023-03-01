@@ -2,8 +2,14 @@ package com.pinkpanther.java_app.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-// import java.util.Calendar;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "employees")
 @Document("employees")
 public class Employee {
     @Id
@@ -11,15 +17,26 @@ public class Employee {
 
     private String name;
     private int experience;
-    // private Calendar dob;
 
+    public Employee(){
+
+    }
+
+    public Employee(String name, int experience){
+        // super();
+        this.name = name;
+        this.experience = experience;
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public String getId() {
         return id;  
     }
 
-    // public void setId(String id) {
-    //     this.id = id;
-    // }
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -36,21 +53,4 @@ public class Employee {
     public void setExperience(int experience) {
         this.experience = experience;
     }
-
-    // public Calendar getDob() {
-    //     return dob;
-    // }
-
-    // public void setDob(Calendar dob) {
-    //     this.dob = dob;
-    // }
-
-
-    public Employee(String name, int experience){
-        super();
-        // this.id = id;
-        this.name = name;
-        this.experience = experience;
-        // this.dob = dob;
-   }
 }
