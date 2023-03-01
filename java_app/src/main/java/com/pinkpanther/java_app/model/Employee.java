@@ -7,8 +7,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
-// import jakarta.persistence.Id;
-// import java.util.Calendar;
 
 @Entity
 @Table(name = "employees")
@@ -19,7 +17,6 @@ public class Employee {
 
     private String name;
     private int experience;
-    // private Calendar dob;
 
     public Employee(){
 
@@ -27,14 +24,12 @@ public class Employee {
 
     public Employee(String name, int experience){
         // super();
-        // this.id = id;
         this.name = name;
         this.experience = experience;
-        // this.dob = dob;
     }
 
-    // @Id
-    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public String getId() {
         return id;  
     }
