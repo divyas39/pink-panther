@@ -4,14 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import com.pinkpanther.java_app.repository.EmployeeRepository;
 
 @SpringBootApplication
 @EnableMongoRepositories
+@EnableJpaRepositories
 public class JavaAppApplication {
 
-	// @Autowired
+	// @Autowired`
     // EmployeeRepository employeeRepo;
 
 	public static void main(String[] args) {

@@ -1,40 +1,47 @@
 package com.pinkpanther.java_app.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
-// import jakarta.persistence.Id;
+import jakarta.persistence.Id;
+// import jakarta.persistence.Column;
+
 // import java.util.Calendar;
+// import javax.persistence.Entity;
+// import javax.persistence.GeneratedValue;
+// import javax.persistence.GenerationType;
+// import javax.persistence.Id;
+
 
 @Entity
 @Table(name = "employees")
-@Document("employees")
-public class Employee {
-    @Id
+public class EmployeeSql {
+    // @Id 
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
+    // @Column(nullable = false)
     private String name;
+
+    // @Column(nullable = false)
     private int experience;
     // private Calendar dob;
 
-    public Employee(){
+    public EmployeeSql(){
 
     }
 
-    public Employee(String name, int experience){
+    public EmployeeSql(String name, int experience){
         // super();
         // this.id = id;
         this.name = name;
         this.experience = experience;
         // this.dob = dob;
-    }
+   }
 
-    // @Id
-    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public String getId() {
         return id;  
     }
@@ -58,4 +65,12 @@ public class Employee {
     public void setExperience(int experience) {
         this.experience = experience;
     }
+
+    // public Calendar getDob() {
+    //     return dob;
+    // }
+
+    // public void setDob(Calendar dob) {
+    //     this.dob = dob;
+    // }
 }

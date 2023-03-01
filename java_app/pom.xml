@@ -18,6 +18,35 @@
 	</properties>
 	<dependencies>
 
+		<!-- <dependency>
+			<groupId>net.sourceforge.javydreamercsw</groupId>
+			<artifactId>MySQL-Driver</artifactId>
+			<version>0.1</version>
+			<type>nbm</type>
+		</dependency> -->
+
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.32</version>
+		</dependency>
+
+
+		<!-- <dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.26</version>
+		</dependency> -->
+
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<version>3.0.3</version>
+		</dependency>
+
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
