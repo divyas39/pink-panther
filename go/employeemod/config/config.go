@@ -1,7 +1,8 @@
 package config
- 
+
 import (
-    "database/sql"
+	"database/sql"
+	"fmt"
 )
  
 func Connect_sql() *sql.DB {
@@ -12,7 +13,7 @@ func Connect_sql() *sql.DB {
  
     db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+dbName)
     if err != nil {
-        panic(err.Error())
+        fmt.Println(err.Error())
     }
     return db
 }

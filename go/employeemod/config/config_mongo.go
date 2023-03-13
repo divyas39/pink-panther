@@ -11,9 +11,11 @@ package config
 
 import (
 	"context"
+	"fmt"
+	"log"
+
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
 )
 
 var (
@@ -43,7 +45,7 @@ var (
 
 
 /*Setup opens a database connection to mongodb*/
-func Setup() {
+func Setup() *mongo.Collection {
 	host := "127.0.0.1"
 	port := "27017"
 	connectionURI := "mongodb://" + host + ":" + port + "/"
@@ -58,6 +60,8 @@ func Setup() {
 		log.Fatal(err)
 	}
 
-	db := client.Database("DB")
+	db := client.Database("employees")
 	EmployeesCollection = db.Collection("employees")
+	fmt.Println("connected to database")
+	return EmployeesCollection
 }

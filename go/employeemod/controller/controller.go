@@ -2,11 +2,15 @@ package controller
 
 import (
 	"encoding/json"
+	// "errors"
+	"fmt"
 	"net/http"
+
 	// "employeemod/service"
-	"github.com/gorilla/mux"
 	"employeemod/model"
 	o "employeemod/service"
+
+	"github.com/gorilla/mux"
 )
 
 
@@ -14,6 +18,7 @@ func GetEmployees(response http.ResponseWriter, request *http.Request) {
 
 	db_name := request.URL.Query().Get("db")
 	var jsonResponse []byte 
+	var jsonError error
 	
 	var httpError = model.ErrorResponse{
 		Code: http.StatusInternalServerError, Message: "No employees in database",
@@ -21,19 +26,21 @@ func GetEmployees(response http.ResponseWriter, request *http.Request) {
 
 	if db_name == "mysql" {
 		mysqlinter := &o.MysqlEmployeeStruct{}
-		jsonResponse = mysqlinter.GetEmployeesFromDB()
+		jsonResponse, jsonError = mysqlinter.GetEmployeesFromDB()
 	}else if db_name == "mongodb" {
 		mongointer := &o.MongoEmployeeStruct{}
-		jsonResponse = mongointer.GetEmployees()
-
+		jsonResponse, jsonError = mongointer.GetEmployees()
+		fmt.Println("entered")
 	}else{
 		jsonResponse = nil
 	}
+	fmt.Println("RESPONSE", jsonResponse, jsonError)
 	
 
 	if jsonResponse == nil {
 		ReturnErrorResponse(response, request, httpError)
 	} else {
+		fmt.Println("TADA")
 		response.Header().Set("Content-Type", "application/json")
 		response.Write(jsonResponse)
 	}
@@ -66,19 +73,22 @@ func InsertEmployees(response http.ResponseWriter, request *http.Request) {
 
 			if db_name == "mysql"{
 				mysqlinter := &o.MysqlEmployeeStruct{}
-				isInserted = mysqlinter.InsertEmployeeInDB(employeeDetails)
-			}else if db_name == "mongo"{
+				isInserted, err = mysqlinter.InsertEmployeeInDB(employeeDetails)
+			}else if db_name == "mongodb"{
 				mongointer := &o.MongoEmployeeStruct{}
-				isInserted = mongointer.CreateEmployee(employeeDetails)
+				isInserted, err = mongointer.CreateEmployee(employeeDetails)
+				fmt.Println("Document created")
 			}else{
 				isInserted = false
 			}
+			fmt.Println("ERROR", err)
+			fmt.Println(isInserted)
 			
-			if isInserted {
-				GetEmployees(response, request)
-			} else {
-				ReturnErrorResponse(response, request, httpError)
-			}
+			// if isInserted {
+			// 	GetEmployees(response, request)
+			// } else {
+			// 	ReturnErrorResponse(response, request, httpError)
+			// }
 		}
 	}
 }
@@ -88,6 +98,7 @@ func DeleteEmployee(response http.ResponseWriter, request *http.Request) {
 
 	db_name := request.URL.Query().Get("db")
 	var isDeleted bool
+	var err error
 
 	var httpError = model.ErrorResponse{
 		Code: http.StatusInternalServerError, Message: "Employee ID not found",
@@ -100,13 +111,14 @@ func DeleteEmployee(response http.ResponseWriter, request *http.Request) {
 
 		if db_name == "mysql"{
 			mysqlinter := &o.MysqlEmployeeStruct{}
-			isDeleted = mysqlinter.DeleteEmployeeFromDB(userID)
-		}else if db_name == "mongo"{
+			isDeleted, err = mysqlinter.DeleteEmployeeFromDB(userID)
+		}else if db_name == "mongodb"{
 			mongointer := &o.MongoEmployeeStruct{}
-			isDeleted = mongointer.DeleteEmployee(userID)
+			isDeleted, err = mongointer.DeleteEmployee(userID)
 		}else{
 			isDeleted = false
 		}
+		fmt.Println(err)
 		
 		if isDeleted {
 			GetEmployees(response, request)
@@ -146,13 +158,14 @@ func UpdateEmployee(response http.ResponseWriter, request *http.Request) {
 
 			if db_name == "mysql"{
 				mysqlinter := &o.MysqlEmployeeStruct{}
-				isUpdated = mysqlinter.UpdateEmployeeInDB(employeeDetails)
-			}else if db_name == "mongo"{
+				isUpdated, err = mysqlinter.UpdateEmployeeInDB(employeeDetails)
+			}else if db_name == "mongodb"{
 				mongointer := &o.MongoEmployeeStruct{}
-				isUpdated = mongointer.UpdateEmployee(employeeDetails)
+				isUpdated, err = mongointer.UpdateEmployee(employeeDetails)
 			}else{
 				isUpdated = false
 			}
+			fmt.Println(err)
 			
 			if isUpdated {
 				GetEmployees(response, request)
@@ -168,7 +181,7 @@ func ReturnErrorResponse(response http.ResponseWriter, request *http.Request, er
 	httpResponse := &model.ErrorResponse{Code: errorMesage.Code, Message: errorMesage.Message}
 	jsonResponse, err := json.Marshal(httpResponse)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 	response.Header().Set("Content-Type", "application/json")
 	response.WriteHeader(errorMesage.Code)

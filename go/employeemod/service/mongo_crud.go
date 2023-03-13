@@ -10,6 +10,7 @@ import (
 	"employeemod/model"
 	"fmt"
 	"encoding/json"
+	conf "employeemod/config"
 )
 
 var (
@@ -22,25 +23,27 @@ type MongoEmployeeStruct struct{
 }
 
 func (o *MongoEmployeeStruct) CreateEmployee(emp model.Employee) (bool, error) {
+	EmployeesCollection = conf.Setup()
+	fmt.Println("employee", emp)
 	result, err := EmployeesCollection.InsertOne(Ctx, emp)
+	fmt.Println("ERRRRRR", err)
 	if err != nil {
 		return false, err
 	}
 	fmt.Println(result)
-	return 	true, err
+	return 	true, nil
 }
 
 
 func (o *MongoEmployeeStruct) GetEmployee(id string) (model.Employee, error) {
+	EmployeesCollection = conf.Setup()
 	var emp model.Employee
 	// objectId, err := primitive.ObjectIDFromHex(id)
 	// if err != nil{
 	// 	return emp,err
 	// }
 	
-	err := EmployeesCollection.
-		FindOne(Ctx, bson.D{{"_id", id}}).
-		Decode(&emp)
+	err := EmployeesCollection.FindOne(Ctx, bson.D{{"_id", id}}).Decode(&emp)
 	if err != nil {
 		return emp, err
 	}
@@ -49,6 +52,7 @@ func (o *MongoEmployeeStruct) GetEmployee(id string) (model.Employee, error) {
 
 
 func (o *MongoEmployeeStruct) GetEmployees() ([]byte, error) {
+	EmployeesCollection = conf.Setup()
 	var emp model.Employee
 	var emps []model.Employee
 
@@ -72,6 +76,7 @@ func (o *MongoEmployeeStruct) GetEmployees() ([]byte, error) {
 
 
 func (o *MongoEmployeeStruct) UpdateEmployee(employeeDetails model.Employee) (bool, error) {
+	EmployeesCollection = conf.Setup()
 	id := employeeDetails.Id
 	filter := bson.D{{"_id", id}}
 	update := bson.D{{"$set", bson.D{{"name", employeeDetails.Name}, {"experiemce", employeeDetails.Experience}}}}
@@ -88,6 +93,7 @@ func (o *MongoEmployeeStruct) UpdateEmployee(employeeDetails model.Employee) (bo
 
 
 func (o *MongoEmployeeStruct) DeleteEmployee(id string) (bool, error) {
+	EmployeesCollection = conf.Setup()
 	_, err := EmployeesCollection.DeleteOne(Ctx, bson.D{{"_id", id}})
 	if err != nil {
 		return false, err
