@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	// "net/http"
-	"controller"
+	"employeemod/controller"
+	"log"
 
 	"github.com/gorilla/mux"
 )
@@ -12,15 +14,16 @@ func addApproutes() {
 
 	route := mux.NewRouter()
 
-	route.HandleFunc("/employees", controller.getEmployees).Methods("GET")
+	route.HandleFunc("/employees", controller.GetEmployees).Methods("GET")
 
-	route.HandleFunc("/employee", controller.insertEmployees).Methods("POST")
+	route.HandleFunc("/employee", controller.InsertEmployees).Methods("POST")
 
-	route.HandleFunc("/employee/{id}", controller.deleteEmployee).Methods("DELETE")
+	route.HandleFunc("/employee/{id}", controller.DeleteEmployee).Methods("DELETE")
 
-	route.HandleFunc("/employee", controller.updateEmployee).Methods("PUT")
+	route.HandleFunc("/employee", controller.UpdateEmployee).Methods("PUT")
 
-	fmt.Println("Routes are Loded.")
+	fmt.Println("Routes are Loaded.")
+	log.Fatal(http.ListenAndServe(":10000", route))
 }
 
 func main() {

@@ -2,16 +2,21 @@ package service
 
 import (
 	// "context"
-	"../model"
+	"employeemod/model"
 	// "../service"
-	"../config"
+	"employeemod/config"
 	// "database/sql"
 	// "errors"
 	"fmt"
 	"encoding/json"
+	// "employeemod/interfaces"
 )
 
-func GetEmployeesFromDB() []byte {
+type MysqlEmployeeStruct struct{
+
+}
+
+func (s *MysqlEmployeeStruct) GetEmployeesFromDB() ([]byte, error) {
 	var (
 		employee  model.Employee
 		employees []model.Employee
@@ -22,7 +27,7 @@ func GetEmployeesFromDB() []byte {
 	rows, err := mysql.Query("SELECT * FROM employees")
 	if err != nil {
 		fmt.Println(err)
-		return nil
+		return nil, err
 	}
 	for rows.Next() {
 		rows.Scan(&employee.Id, &employee.Name, &employee.Experience)
@@ -32,52 +37,52 @@ func GetEmployeesFromDB() []byte {
 	jsonResponse, jsonError := json.Marshal(employees)
 	if jsonError != nil {
 		fmt.Println(jsonError)
-		return nil
+		return nil, jsonError
 	}
-	return jsonResponse
+	return jsonResponse, jsonError
 }
 
-func InsertEmployeeInDB(employeeDetails model.Employee) bool {
+func (s *MysqlEmployeeStruct) InsertEmployeeInDB(employeeDetails model.Employee) (bool, error) {
 	var mysql = config.Connect_sql()
 	stmt, err := mysql.Prepare("INSERT into employees SET name=?,experience=?")
 	if err != nil {
 		fmt.Println(err)
-		return false
+		return false, err
 	}
 	_, queryError := stmt.Exec(employeeDetails.Name, employeeDetails.Experience)
 	if queryError != nil {
 		fmt.Println(queryError)
-		return false
+		return false, queryError
 	}
-	return true
+	return true, nil
 }
 
-func DeleteEmployeeFromDB(employeeID string) bool {
+func (s *MysqlEmployeeStruct) DeleteEmployeeFromDB(employeeID string) (bool, error) {
 	var mysql = config.Connect_sql()
 	stmt, err := mysql.Prepare("DELETE FROM employees WHERE id=?")
 	if err != nil {
 		fmt.Println(err)
-		return false
+		return false, err
 	}
 	_, queryError := stmt.Exec(employeeID)
 	if queryError != nil {
 		fmt.Println(queryError)
-		return false
+		return false, queryError
 	}
-	return true
+	return true, nil
 }
 
-func UpdateEmployeeInDB(employeeDetails model.Employee) bool {
+func (s *MysqlEmployeeStruct) UpdateEmployeeInDB(employeeDetails model.Employee) (bool, error) {
 	var mysql = config.Connect_sql()
 	stmt, err := mysql.Prepare("UPDATE employees SET name=?,experience=? WHERE id=?")
 	if err != nil {
 		fmt.Println(err)
-		return false
+		return false, err
 	}
 	_, queryError := stmt.Exec(employeeDetails.Name, employeeDetails.Experience, employeeDetails.Id)
 	if queryError != nil {
 		fmt.Println(queryError)
-		return false
+		return false, queryError
 	}
-	return true
+	return true, nil
 }
