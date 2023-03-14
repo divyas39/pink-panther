@@ -23,7 +23,7 @@ func addApproutes() {
 	route.HandleFunc("/employee", controller.UpdateEmployee).Methods("PUT")
 
 	fmt.Println("Routes are Loaded.")
-	log.Fatal(http.ListenAndServe(":10000", route))
+	log.Fatal(http.ListenAndServe(":8081", route))
 }
 
 func main() {
